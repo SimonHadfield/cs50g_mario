@@ -16,10 +16,29 @@ function PlayState:init()
     self.backgroundX = 0
 
     self.gravityOn = true
-    self.gravityAmount = 6
+    self.gravityAmount = 3 -- 6
+
+    player_x = 0
+
+    local groundheight = 0
+    for i = 1, 10 do 
+        for y = 1, 10 do
+            if self.tileMap.tiles[y][i].id == TILE_ID_GROUND then
+                groundheight = groundheight + 1
+            end
+        end
+
+        if groundheight == 0 then
+            player_x = player_x + 16 -- shift player right if no solid ground
+        end
+        if groundheight > 0 then
+            break
+        end
+        print("player_x: ", player_x)
+    end
 
     self.player = Player({
-        x = 0, y = 0,
+        x = player_x, y = 0,
         width = 16, height = 20,
         texture = 'green-alien',
         stateMachine = StateMachine {
