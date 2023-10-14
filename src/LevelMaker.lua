@@ -156,8 +156,117 @@ function LevelMaker.generate(width, height)
                             gSounds['empty-block']:play()
                         end
                     }
+
                 )
+                
             end
+            -- chance to spawn a block
+            if math.random(10) == 1 then
+
+                table.insert(objects,
+                
+                -- lock block
+                GameObject {
+                    texture = 'lock-keys',
+                    x = (x - 1) * TILE_SIZE,
+                    y = (blockHeight - 1) * TILE_SIZE,
+                    width = 16,
+                    height = 16,
+                    
+                    -- make it a random variant
+                    frame = math.random(#LOCK_BLOCKS + 1, #LOCK_BLOCKS + #KEY_BLOCKS),
+                    collidable = false,
+                    hit = false,
+                    solid = true,
+                    
+                    -- collision function takes itself
+                    onCollide = function(obj)
+                        -- spawn a gem if we haven't already hit the block
+                        if not obj.hit then
+
+                            -- chance to spawn gem, not guaranteed
+                            if math.random(5) == 1 then
+
+                                -- maintain reference so we can set it to nil
+                                local gem = GameObject {
+                                    texture = 'gems',
+                                    x = (x - 1) * TILE_SIZE,
+                                    y = (blockHeight - 1) * TILE_SIZE - 4,
+                                    width = 16,
+                                    height = 16,
+                                    frame = math.random(#GEMS),
+                                    collidable = true,
+                                    consumable = true,
+                                    solid = false,
+
+                                    -- gem has its own function to add to the player's score
+                                    onConsume = function(player, object)
+                                        gSounds['pickup']:play()
+                                        player.score = player.score + 100
+                                    end
+                                }
+                                
+                                -- make the gem move up from the block and play a sound
+                                Timer.tween(0.1, {
+                                    [gem] = {y = (blockHeight - 2) * TILE_SIZE}
+                                })
+                                gSounds['powerup-reveal']:play()
+
+                                table.insert(objects, gem)
+                            end
+
+                            obj.hit = true
+                        end
+
+                        gSounds['empty-block']:play()
+                    end
+                }
+            )
+            end
+                    --[[
+                            
+                            -- spawn a gem if we haven't already hit the block
+                            if not obj.hit then
+                                
+                                -- chance to spawn gem, not guaranteed
+                                if math.random(5) == 1 then
+                                    
+                                    -- maintain reference so we can set it to nil
+                                    local gem = GameObject {
+                                        texture = 'keys',
+                                        x = (x - 1) * TILE_SIZE,
+                                y = (blockHeight - 1) * TILE_SIZE - 4,
+                                width = 16,
+                                height = 16,
+                                frame = math.random(#key),
+                                collidable = true,
+                                consumable = true,
+                                solid = false,
+                                
+                                -- gem has its own function to add to the player's score
+                                    onConsume = function(player, object)
+                                        gSounds['pickup']:play()
+                                        player.score = player.score + 100
+                                    end
+                                }
+                                
+                                -- make the gem move up from the block and play a sound
+                                Timer.tween(0.1, {
+                                    [gem] = {y = (blockHeight - 2) * TILE_SIZE}
+                                })
+                                gSounds['powerup-reveal']:play()
+                                
+                                table.insert(objects, gem)
+                            end
+                            
+                            obj.hit = true
+                        end
+                        
+                        gSounds['empty-block']:play()
+                    end
+                }
+            )
+            ]]
         end
     end
 
