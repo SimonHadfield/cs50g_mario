@@ -9,6 +9,7 @@ PlayState = Class{__includes = BaseState}
 
 function PlayState:enter(params)
     --print("p: ", params)
+    self.levelNo = params.levelNo or 1
     self.player.score = params.score or 0
 end
 
@@ -93,7 +94,7 @@ function PlayState:update(dt)
     if levelfinished then
         levelfinished = false
         --gStateMachine:change('start', {score = self.player.score})
-        gStateMachine:change('play', {score = self.player.score})
+        gStateMachine:change('play', {levelNo = self.levelNo + 1 ,score = self.player.score})
     end
     
     -- When the key is equipped, you can update the lock block's consumable property
@@ -155,6 +156,13 @@ function PlayState:render()
     love.graphics.print(tostring(self.player.score), 5, 5)
     love.graphics.setColor(1, 1, 1, 1)
     love.graphics.print(tostring(self.player.score), 4, 4)
+
+    love.graphics.setColor(0, 0, 0, 1)
+    love.graphics.print("LEVEL: ", 90, 5)
+    love.graphics.print(tostring(self.levelNo), 150, 5)
+    love.graphics.setColor(1, 1, 1, 1)
+    love.graphics.print("LEVEL: ", 89, 4)
+    love.graphics.print(tostring(self.levelNo), 149, 4)
 
     -- test render flag
     --love.graphics.draw(gTextures['flag'], gFrames['flag'][1], -math.floor(self.camX) + 16, -math.floor(self.camY) + 16) -- pole
