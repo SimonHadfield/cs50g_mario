@@ -8,6 +8,8 @@
     cogden@cs50.harvard.edu
 ]]
 
+levelfinished = false
+lockblock_destroyed = false
 
 LevelMaker = Class{}
 
@@ -203,40 +205,36 @@ function LevelMaker.generate(width, height)
                         onConsume = function(player, object)
                             gSounds['pickup']:play()
                             key_equipped = false
+                            lockblock_destroyed = true
                             player.score = player.score + 100
 
                             flag_x = (width - 1) * TILE_SIZE
                             print("flag x: ", flag_x)
                             -- add flag to table
-                            table.insert(objects,
-                                        
-                                    -- flag pole
-                                    GameObject {
-                                        texture = 'flag',
-                                        x = flag_x,
-                                        --x = (width - 1) * TILE_SIZE,
-                                        y = (blockHeight - 1) * TILE_SIZE,
-                                        width = 16,
-                                        height = 16,
-                                        
-                                        -- make it a random variant flag pole
-                                        frame = math.random(1, 6),
-                                        collidable = false,
-                                        hit = false,
-                                        solid = false,
-                                        
-                                        collidable = true,
-                                        consumable = true,
-                                        solid = false,
-                
-                                        -- gem has its own function to add to the player's score
-                                        onConsume = function(player, object)
-                                            gSounds['pickup']:play()
-                                            levelfinished = true
-                                            player.score = player.score + 100
-                                        end
-                                    }
-                                    )
+                            flag = GameObject {
+                                texture = 'flag',
+                                x = flag_x,
+                                --x = (width - 1) * TILE_SIZE,
+                                y = (blockHeight - 1) * TILE_SIZE,
+                                width = 16,
+                                height = 16,
+                                
+                                -- make it a random variant flag pole
+                                frame = math.random(1, 6),
+                                collidable = false,
+                                hit = false,
+                                solid = false,
+                                consumable = true,
+        
+                                -- gem has its own function to add to the player's score
+                                onConsume = function(player, object)
+                                    gSounds['pickup']:play()
+                                    levelfinished = true
+                                    player.score = player.score + 100
+                                end
+                            }
+
+                            table.insert(objects, flag )
                     end
                     }
 

@@ -84,7 +84,12 @@ end
 function PlayState:update(dt)
     Timer.update(dt)
 
-        -- When the key is equipped, you can update the lock block's consumable property
+    if levelfinished then
+        levelfinished = false
+        gStateMachine:change('start')
+    end
+    
+    -- When the key is equipped, you can update the lock block's consumable property
     if key_equipped then
         lockblock.consumable = true
         lockblock.solid = false
@@ -102,7 +107,7 @@ function PlayState:update(dt)
             cloth_animation = 7
         end
     end
-    
+    print("flag_consumed", levelfinished)
 
     -- remove any nils from pickups, etc.
     self.level:clear()
@@ -146,8 +151,9 @@ function PlayState:render()
 
     -- test render flag
     --love.graphics.draw(gTextures['flag'], gFrames['flag'][1], -math.floor(self.camX) + 16, -math.floor(self.camY) + 16) -- pole
-    love.graphics.draw(gTextures['flag'], gFrames['flagcloth'][cloth_animation], -math.floor(self.camX) + flag_x + 8, -math.floor(self.camY) + 50) -- cloth
-    
+    if levelfinished == false and lockblock_destroyed == true then
+        love.graphics.draw(gTextures['flag'], gFrames['flagcloth'][cloth_animation], -math.floor(self.camX) + flag_x + 8, -math.floor(self.camY) + 50) -- cloth
+    end
     -- if key key_equipped render key
     if key_equipped == true then
         love.graphics.draw(gTextures['lock-keys'], gFrames['lock-keys'][1], 5, 15)
