@@ -208,7 +208,7 @@ function LevelMaker.generate(width, height)
                             lockblock_destroyed = true
                             player.score = player.score + 100
 
-                            flag_x = (width - 1) * TILE_SIZE
+                            flag_x = (width - 2) * TILE_SIZE
                             print("flag x: ", flag_x)
                             -- add flag to table
                             flag = GameObject {
@@ -226,7 +226,6 @@ function LevelMaker.generate(width, height)
                                 solid = false,
                                 consumable = true,
         
-                                -- gem has its own function to add to the player's score
                                 onConsume = function(player, object)
                                     gSounds['pickup']:play()
                                     levelfinished = true

@@ -7,6 +7,11 @@
 
 PlayState = Class{__includes = BaseState}
 
+function PlayState:enter(params)
+    --print("p: ", params)
+    self.player.score = params.score or 0
+end
+
 function PlayState:init()
     key_equipped = false
     self.camX = 0
@@ -53,10 +58,10 @@ function PlayState:init()
             end
         end
 
-        if not (groundheight == 3) then
+        if  groundheight == 0 then
             flag_x = flag_x - 16 -- shift player right if no solid ground
         end
-        if groundheight == 3 then
+        if not (groundheight == 0) then
             break
         end
         print("flag_x: ", flag_x)
@@ -84,9 +89,11 @@ end
 function PlayState:update(dt)
     Timer.update(dt)
 
+    -- restart level with score
     if levelfinished then
         levelfinished = false
-        gStateMachine:change('start')
+        --gStateMachine:change('start', {score = self.player.score})
+        gStateMachine:change('play', {score = self.player.score})
     end
     
     -- When the key is equipped, you can update the lock block's consumable property
