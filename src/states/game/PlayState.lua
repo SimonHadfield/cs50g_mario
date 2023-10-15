@@ -16,7 +16,7 @@ function PlayState:init()
     self.backgroundX = 0
 
     self.gravityOn = true
-    self.gravityAmount = 3 -- 6
+    self.gravityAmount = 2 -- 6
 
     player_x = 0
 
@@ -98,6 +98,12 @@ function PlayState:render()
     love.graphics.print(tostring(self.player.score), 5, 5)
     love.graphics.setColor(1, 1, 1, 1)
     love.graphics.print(tostring(self.player.score), 4, 4)
+
+    -- if key key_equipped render key
+    if key_equipped == true then
+        love.graphics.draw(gTextures['lock-keys'], gFrames['lock-keys'][1], 5, 15)
+    end
+
 end
 
 function PlayState:updateCamera()
