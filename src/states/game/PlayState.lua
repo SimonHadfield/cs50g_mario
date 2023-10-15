@@ -19,6 +19,12 @@ function PlayState:init()
     self.gravityOn = true
     self.gravityAmount = 2 -- 6
 
+    flag_x = (100 - 1) * TILE_SIZE
+
+    -- flag init
+    cloth_animation = 7
+    cloth_time = 0
+
     player_x = 0
 
     local groundheight = 0
@@ -35,7 +41,25 @@ function PlayState:init()
         if groundheight > 0 then
             break
         end
-        print("player_x: ", player_x)
+    end
+
+    local groundheight = 0
+    print("intial flag x: ", flag_x)
+    -- find ground for flag to spawn near end of level
+    for i = 99, 90 do 
+        for y = 1, 10 do
+            if self.tileMap.tiles[y][i].id == TILE_ID_GROUND then
+                groundheight = groundheight + 1
+            end
+        end
+
+        if not (groundheight == 3) then
+            flag_x = flag_x - 16 -- shift player right if no solid ground
+        end
+        if groundheight == 3 then
+            break
+        end
+        print("flag_x: ", flag_x)
     end
 
     self.player = Player({
@@ -60,14 +84,25 @@ end
 function PlayState:update(dt)
     Timer.update(dt)
 
-    -- update lock block
-    print("key equipped: ", key_equipped)
         -- When the key is equipped, you can update the lock block's consumable property
     if key_equipped then
-        print("lock.consume: ", lockblock.consumable)
         lockblock.consumable = true
         lockblock.solid = false
     end
+
+    -- update cloth animation
+    cloth_time = cloth_time + dt
+    if cloth_time > 0.05 then
+        cloth_time = 0
+
+        -- generalise this for all cloth colours
+        if cloth_animation < 9 then
+            cloth_animation = cloth_animation + 1
+        else
+            cloth_animation = 7
+        end
+    end
+    
 
     -- remove any nils from pickups, etc.
     self.level:clear()
@@ -109,6 +144,10 @@ function PlayState:render()
     love.graphics.setColor(1, 1, 1, 1)
     love.graphics.print(tostring(self.player.score), 4, 4)
 
+    -- test render flag
+    --love.graphics.draw(gTextures['flag'], gFrames['flag'][1], -math.floor(self.camX) + 16, -math.floor(self.camY) + 16) -- pole
+    love.graphics.draw(gTextures['flag'], gFrames['flagcloth'][cloth_animation], -math.floor(self.camX) + flag_x + 8, -math.floor(self.camY) + 50) -- cloth
+    
     -- if key key_equipped render key
     if key_equipped == true then
         love.graphics.draw(gTextures['lock-keys'], gFrames['lock-keys'][1], 5, 15)
