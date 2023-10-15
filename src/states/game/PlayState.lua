@@ -8,6 +8,7 @@
 PlayState = Class{__includes = BaseState}
 
 function PlayState:init()
+    key_equipped = false
     self.camX = 0
     self.camY = 0
     self.level = LevelMaker.generate(100, 10)
@@ -59,6 +60,15 @@ end
 function PlayState:update(dt)
     Timer.update(dt)
 
+    -- update lock block
+    print("key equipped: ", key_equipped)
+        -- When the key is equipped, you can update the lock block's consumable property
+    if key_equipped then
+        print("lock.consume: ", lockblock.consumable)
+        lockblock.consumable = true
+        lockblock.solid = false
+    end
+
     -- remove any nils from pickups, etc.
     self.level:clear()
 
@@ -103,7 +113,6 @@ function PlayState:render()
     if key_equipped == true then
         love.graphics.draw(gTextures['lock-keys'], gFrames['lock-keys'][1], 5, 15)
     end
-
 end
 
 function PlayState:updateCamera()

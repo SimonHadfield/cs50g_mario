@@ -20,7 +20,6 @@ function LevelMaker.generate(width, height)
     -- lock and key 
     local lockblock_exists = false
     local key_exists = false
-    key_equipped = false
     
     local tileID = TILE_ID_GROUND
     
@@ -176,8 +175,9 @@ function LevelMaker.generate(width, height)
                     
                     -- create only one lock block
                     lockblock_exists = true
+
                     
-                    
+                    print("insider gameobject: ", key_equipped)
 
                     lockblock = GameObject {
                         texture = 'lock-keys',
@@ -202,6 +202,11 @@ function LevelMaker.generate(width, height)
                             end
 
                             gSounds['empty-block']:play()
+                        end,
+
+                        onConsume = function(player, object)
+                            gSounds['pickup']:play()
+                            player.score = player.score + 100
                         end
                     }
 
@@ -218,11 +223,11 @@ function LevelMaker.generate(width, height)
                     
                     table.insert(objects,
                     
-                    -- lkey block
+                    -- key block
                     GameObject {
                         texture = 'lock-keys',
                         x = (x - 1) * TILE_SIZE,
-                        y = (blockHeight - 1) * TILE_SIZE,
+                        y = (blockHeight + 1) * TILE_SIZE,
                         width = 16,
                         height = 16,
                         
@@ -243,63 +248,12 @@ function LevelMaker.generate(width, height)
                             player.score = player.score + 100
                         end
                     }
-                    )   
+                    )
                 end
             end
-                    --[[
-                            
-                            -- spawn a gem if we haven't already hit the block
-                            if not obj.hit then
-                                
-                                -- chance to spawn gem, not guaranteed
-                                if math.random(5) == 1 then
-                                    
-                                    -- maintain reference so we can set it to nil
-                                    local gem = GameObject {
-                                        texture = 'keys',
-                                        x = (x - 1) * TILE_SIZE,
-                                y = (blockHeight - 1) * TILE_SIZE - 4,
-                                width = 16,
-                                height = 16,
-                                frame = math.random(#key),
-                                collidable = true,
-                                consumable = true,
-                                solid = false,
-                                
-                                -- gem has its own function to add to the player's score
-                                    onConsume = function(player, object)
-                                        gSounds['pickup']:play()
-                                        player.score = player.score + 100
-                                    end
-                                }
-                                
-                                -- make the gem move up from the block and play a sound
-                                Timer.tween(0.1, {
-                                    [gem] = {y = (blockHeight - 2) * TILE_SIZE}
-                                })
-                                gSounds['powerup-reveal']:play()
-                                
-                                table.insert(objects, gem)
-                            end
-                            
-                            obj.hit = true
-                        end
-                        
-                        gSounds['empty-block']:play()
-                    end
-                }
-            )
-            ]]
         end
     end
 
-    print("key equipped: ", key_equipped)
-        -- When the key is equipped, you can update the lock block's consumable property
-    if key_equipped then
-        print("lock.consume: ", lockblock.consumable)
-        lockblock.consumable = true
-        lockblock.solid = false
-    end
 
     local map = TileMap(width, height)
     map.tiles = tiles
